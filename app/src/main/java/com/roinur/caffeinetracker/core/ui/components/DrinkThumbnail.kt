@@ -1,5 +1,7 @@
 package com.roinur.caffeinetracker.core.ui.components
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.roinur.caffeinetracker.BuildConfig
 import com.roinur.caffeinetracker.R
 import com.roinur.caffeinetracker.core.model.DrinkImage
 import com.roinur.caffeinetracker.core.model.drinkImage
@@ -29,7 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
 
-private val imageResources = mapOf(
+private val coreImageResources = mapOf(
     DrinkImage.DRIP to R.drawable.drip_coffee,
     DrinkImage.INSTANT to R.drawable.instant_coffee,
     DrinkImage.LATTE to R.drawable.latte,
@@ -37,26 +40,48 @@ private val imageResources = mapOf(
     DrinkImage.ENERGY to R.drawable.energy_drink,
     DrinkImage.ESPRESSO to R.drawable.espresso,
     DrinkImage.BLACK_TEA to R.drawable.black_tea,
-    DrinkImage.GREEN_TEA to R.drawable.green_tea,
-    DrinkImage.NOCCO to R.drawable.energy_drink,
-    DrinkImage.CELSIUS to R.drawable.energy_drink,
-    DrinkImage.RED_BULL to R.drawable.energy_drink,
-    DrinkImage.LATITUDE to R.drawable.energy_drink,
-    DrinkImage.MONSTER to R.drawable.energy_drink,
-    DrinkImage.MONSTER_ULTRA to R.drawable.energy_drink,
-    DrinkImage.POWERKING to R.drawable.energy_drink,
-    DrinkImage.ROCKSTAR to R.drawable.energy_drink,
-    DrinkImage.REIGN to R.drawable.energy_drink,
-    DrinkImage.PRIME to R.drawable.energy_drink,
-    DrinkImage.COCA_COLA to R.drawable.energy_drink,
-    DrinkImage.PEPSI to R.drawable.energy_drink
+    DrinkImage.GREEN_TEA to R.drawable.green_tea
 )
 
-internal fun drinkImageResource(kind: DrinkImage): Int? = imageResources[kind]
+// Optional local-only brand drawables bundled into signed builds when present locally,
+// falling back cleanly to R.drawable.energy_drink in clean source checkouts.
+private val optionalBrandDrawableNames = mapOf(
+    DrinkImage.NOCCO to "nocco",
+    DrinkImage.CELSIUS to "celsius",
+    DrinkImage.RED_BULL to "red_bull",
+    DrinkImage.LATITUDE to "latitude",
+    DrinkImage.MONSTER to "monster",
+    DrinkImage.MONSTER_ULTRA to "monster_ultra",
+    DrinkImage.POWERKING to "powerking",
+    DrinkImage.ROCKSTAR to "rockstar",
+    DrinkImage.REIGN to "reign",
+    DrinkImage.PRIME to "prime",
+    DrinkImage.COCA_COLA to "coca_cola",
+    DrinkImage.PEPSI to "pepsi"
+)
+
+private val resolvedIdCache = ConcurrentHashMap<DrinkImage, Int>(DrinkImage.entries.size * 2)
+
+@SuppressLint("DiscouragedApi")
+internal fun drinkImageResource(
+    resources: Resources,
+    kind: DrinkImage,
+    packageName: String = BuildConfig.APPLICATION_ID
+): Int? {
+    coreImageResources[kind]?.let { return it }
+    resolvedIdCache[kind]?.let { return it }
+    val optionalName = optionalBrandDrawableNames[kind] ?: return null
+    val resolved = resources.getIdentifier(optionalName, "drawable", packageName)
+        .takeIf { it != 0 } ?: R.drawable.energy_drink
+    return resolvedIdCache.putIfAbsent(kind, resolved) ?: resolved
+}
+
+internal fun drinkImageResource(context: Context, kind: DrinkImage): Int? =
+    drinkImageResource(context.resources, kind, context.packageName)
 
 // Lock-free cache of pre-decoded, GPU-prepared BitmapPainters so 120Hz scrolling never
 // blocks on a synchronized lock, never decodes PNGs on the main thread, and never allocates Painters per row.
-private val painterCache = ConcurrentHashMap<Int, BitmapPainter>(imageResources.size * 2)
+private val painterCache = ConcurrentHashMap<Int, BitmapPainter>(DrinkImage.entries.size * 2)
 private val containerShape = RoundedCornerShape(14.dp)
 
 private fun decodePainter(resources: Resources, id: Int): BitmapPainter {
@@ -72,8 +97,9 @@ private fun decodePainter(resources: Resources, id: Int): BitmapPainter {
     return painterCache.putIfAbsent(id, painter) ?: painter
 }
 
-internal fun warmDrinkThumbnails(resources: Resources) {
-    imageResources.values.forEach { id ->
+internal fun warmDrinkThumbnails(resources: Resources, packageName: String = BuildConfig.APPLICATION_ID) {
+    DrinkImage.entries.forEach { kind ->
+        val id = drinkImageResource(resources, kind, packageName) ?: return@forEach
         if (!painterCache.containsKey(id)) {
             runCatching { decodePainter(resources, id) }
         }
@@ -99,7 +125,8 @@ fun DrinkThumbnail(
     modifier: Modifier = Modifier,
     showContainer: Boolean = true
 ) {
-    val resource = imageResources[kind]
+    val context = LocalContext.current
+    val resource = remember(kind, context) { drinkImageResource(context, kind) }
     val boxModifier = if (showContainer) {
         modifier.background(MaterialTheme.colorScheme.primary.copy(alpha = .08f), containerShape)
     } else modifier
@@ -114,7 +141,7 @@ fun DrinkThumbnail(
                     modifier = Modifier.matchParentSize().padding(if (showContainer) 3.dp else 1.dp)
                 )
             } else {
-                val resources = LocalContext.current.resources
+                val resources = context.resources
                 val loaded by produceState<BitmapPainter?>(null, resource, resources) {
                     value = withContext(Dispatchers.Default) {
                         runCatching { decodePainter(resources, resource) }.getOrNull()

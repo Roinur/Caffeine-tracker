@@ -44,7 +44,7 @@ internal fun widgetFavoriteRow(context: Context, drink: Drink, settings: Tracker
             setTextViewText(R.id.widget_drink_dose,displayPortion(drink, language)+" · "+WidgetRenderer.mg(drink.caffeineMg))
             setTextColor(R.id.widget_drink_name,palette.onSurface.toArgb())
             setTextColor(R.id.widget_drink_dose,palette.onSurfaceVariant.toArgb())
-            setImageViewResource(R.id.widget_drink_image,drinkImageResource(drinkImage(drink.name,drink.category,drink.imageKey)) ?: R.drawable.widget_coffee)
+            setImageViewResource(R.id.widget_drink_image,drinkImageResource(context, drinkImage(drink.name,drink.category,drink.imageKey)) ?: R.drawable.widget_coffee)
             setImageViewBitmap(R.id.widget_drink_add,WidgetRenderer.plus(palette.primary.toArgb(),palette.onPrimary.toArgb()))
             val fill=Intent().putExtra("drink_id",drink.id)
             setOnClickFillInIntent(R.id.widget_drink_row,fill)
