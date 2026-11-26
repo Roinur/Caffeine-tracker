@@ -1,0 +1,26 @@
+{
+  "energy_drink": {
+    "asset": "app/src/main/res/drawable-nodpi/energy_drink.png",
+    "source": "exec-057ce38b-e6eb-4361-b1f9-491aa2f6d837.png",
+    "method": "Built-in image_gen; product-mockup cutout, transparent alpha; resized and padded to 256px without creative edits",
+    "sha256": "f142d7711d1553cff63991964c7c4f4a881c234d4946482973839e8765071844"
+  },
+  "espresso": {
+    "asset": "app/src/main/res/drawable-nodpi/espresso.png",
+    "source": "exec-52dc2459-57bb-4af6-b456-342ff1bec248.png",
+    "method": "Built-in image_gen; product-mockup cutout, transparent alpha; resized and padded to 256px without creative edits",
+    "sha256": "42fcafe6c9b95aaa5d1c75377a7afc7ed19039f52d691541d6d0269d467de65a"
+  },
+  "black_tea": {
+    "asset": "app/src/main/res/drawable-nodpi/black_tea.png",
+    "source": "exec-b9e91e2b-6394-4198-b8e4-2e24483f641c.png",
+    "method": "Built-in image_gen; product-mockup cutout, transparent alpha; resized and padded to 256px without creative edits",
+    "sha256": "4f1e489d2b52bc782f28518d00c513743e82a1d3af43e95de79c5da121f623f3"
+  },
+  "green_tea": {
+    "asset": "app/src/main/res/drawable-nodpi/green_tea.png",
+    "source": "exec-5694f653-d5bf-4845-aeaf-f8391ad16b66.png",
+    "method": "Built-in image_gen; product-mockup cutout, transparent alpha; resized and padded to 256px without creative edits",
+    "sha256": "5628149f3cf25e7f7af84de9636f9f8c70f0ae26c391df82616a88ee2f944e22"
+  }
+}

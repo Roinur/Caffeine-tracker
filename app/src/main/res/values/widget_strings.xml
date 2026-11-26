@@ -1,0 +1,9 @@
+<resources>
+    <string name="widget_name">Caffeine Tracker · Koffein och favoriter</string>
+    <string name="widget_description">Kvar nu, kvällsnivå och dina favoriter. Tryck på en dryck för att registrera ett intag.</string>
+    <string name="widget_now_label">Kvar nu · uppskattat</string>
+    <string name="widget_dash">— mg</string>
+    <string name="widget_refresh">Uppdatera widgeten</string>
+    <string name="widget_undo">Ångra</string>
+    <string name="widget_no_favorites">Spara favoriter i appen för att lägga till här.</string>
+</resources>

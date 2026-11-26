@@ -1,0 +1,32 @@
+build.gradle.kts  48F7C9D13C50FA379DCE0A2B7C028BCFFE60D428EADA35B12CFB8AF28B31C962
+settings.gradle.kts  B7A52D6560639253DDAD0C466CB6DECF323343162651A4D97352D15333D77E05
+gradle.properties  9C656DCDF13B022EF5688E23D7A9C493A3ABC8272747F8B7B740F08AB6CB72C4
+gradlew  A3648413B47EF77AF21D5EBC36C687C7D103AAEF3E17F33DE7D4F080A6F300A3
+gradlew.bat  57931B17DD228E5C24DAC90E815D0BF82477E831A4618DFAB4136F5446B42A9F
+.gitignore  B1318A35444B22E696A32B365E3652EADF33A751F3796BF1537F865036E4E598
+app\build.gradle.kts  3E4E1CE99E71A3595BE0C9C098E3AC653DE10998A861E0860C1E474E24D91C51
+app\proguard-rules.pro  00AE2E2B8BF93963264BEC36D07A26461246AB99F0509B6DEF015958EFA48016
+app\src\main\res\values\styles.xml  7DB62FFBD10DD77F7915F2BF90E11B0F65B68E6C95C6AD336C489D5906736AA2
+app\src\main\java\com\roinur\saucetracker\core\ui\theme\AccentMode.kt  50A2B64B59A41CCC28F11F7ED8605168F25D2AF345D5FFBBC1EA7C3F33782EC4
+app\src\main\java\com\roinur\saucetracker\core\ui\theme\AccentColors.kt  28B480DB374526D4078AC8CF8EAD4F3868B9F722B745D3371CFDA8552F5A662F
+app\src\main\java\com\roinur\saucetracker\core\ui\theme\ExtraDarkColors.kt  B092047A0835522A8EF6829DBEE92AB9CD6F073822670C69BF228C1903E9F790
+app\src\main\java\com\roinur\saucetracker\core\ui\theme\PaletteAnimations.kt  03004908B30C66CE8C71B6A86B08E976010673270BA27404CB36CA00E2044A9F
+app\src\main\java\com\roinur\saucetracker\core\ui\components\PaletteOutlinedTextField.kt  C9552B82B1F9FA400973ED7EA5A9CB5C393CF23D9A8053518332124DFA0DD911
+app\src\main\java\com\roinur\saucetracker\core\ui\components\PaletteSelectionControls.kt  A6B830EB1199D777DFEC511AFFD64E300998C615E51ED9F7CADAABF3828CD24A
+app\src\main\java\com\roinur\saucetracker\core\storage\DocumentTreeStorage.kt  428087D2B1F74610399B05415E536F1D0B1D0D79FD2AFC200EBFE126FCF1F493
+app\src\main\java\com\roinur\saucetracker\data\backup\RollingBackupStore.kt  1C5F48659205491A588F485E7BF9F837DE44FE5B85751F5E0B91B49349129A97
+app\src\main\java\com\roinur\saucetracker\data\backup\LocalBackupRetention.kt  431D6A3176E71F9E65C57B282167A2356EB9908AFAFBECF15B08953B92099B61
+app\src\main\java\com\roinur\saucetracker\data\backup\BackupJsonWriter.kt  9988297B514728A6ADC1623C8B063D8655493FD14115DFE99A460F5AEFCEF2F7
+app\src\androidTest\AndroidManifest.xml  560F2EF4D440BCBB1A81F480E6371368EC00A4F15C02A84AB583080D8BD4A71F
+app\src\test\java\com\roinur\saucetracker\data\backup\LocalBackupRetentionTest.kt  CD9B8D8D8FA2CCD2ADB6E5DFA5BA7A34D230BF74492BB4F4076EFC8B6130ABFD
+app/src/main/java/com/roinur/saucetracker/feature/dashboard/home/DashboardMetrics.kt  63B23663C3CB1522E4A1C9C52CFB5F032B98C5B1221E0FF4C8A383F880B92CAE  ModernMetricTile: copied body; glyph painter copied and extended with COFFEE/CAFFEINE
+app/src/main/java/com/roinur/saucetracker/core/ui/components/DashboardControls.kt  CF313918F2EF837061518F41CE3BE2C6DB80BB5D44EE79B696C6D1CDA2239807  ThemeToggleWithAccentPicker and accent options: extracted; private-content modes disabled; their data and settings are not copied
+app/src/main/java/com/roinur/saucetracker/feature/settings/SettingsNavigation.kt  0F542E3CCE0779CB5DF196B3954B1AB08DF127060E80D946FCA48FD7A550B0DE  SettingsSearchBar, SettingsCategoryRow, SettingsOptionSection: copied; domain categories/localization adapted
+app/src/main/java/com/roinur/saucetracker/feature/settings/SettingsActions.kt  34605DF2F2D67B58C1DADBB24B026A9DD960C81E8AD594F5E6F71E4FB206370A  SettingsActionButton: unchanged except package
+tools/github-media.ps1  4CAC06CB0C76C2B3DAAEEF3A2F0946F23AA88064C834C639273F196A6FC746B9  copied launcher/capture guard; app identity adapted
+tools/capture-github-media.ps1  99F14138F99FC152B923243E42BD7B44AD3DD109DE62EBB31B602304D19DB09E  copied launcher/capture guard; app identity adapted
+app/src/main/java/com/roinur/saucetracker/feature/dashboard/DashboardHost.kt  D0C0CA797AF61CCC9452679DDFADB2BDA0CE8D95EF5BD90BB7F6FB740AEDE463  CenterAlignedTopAppBar block adapted to caffeine routes/callbacks; profile/private modes removed
+app/src/main/java/com/roinur/saucetracker/feature/dashboard/home/HomeDashboardScreen.kt  3423D2CF5C48F68AE297CF4F887970C0B11C7B25C29D0648FF53CA9AEF0D3268  three metric row plus 2:1/184dp widget row adapted to caffeine data; gallery data bindings removed
+app/src/main/java/com/roinur/saucetracker/core/diagnostics/GitHubMediaSession.kt  0FBF3144DCD5CB7F2592785476FDD2C36D8E0F6926CF9D4E940E173A935866B6  explicit launcher/config/privacy requirement/isolated storage adapted to synthetic caffeine fixtures
+
+Book Tracker: app\src\main\java\com\roinur\booktracker\feature\stats\BookStatsComponents.kt  689BC142908C3B467F2F747D7599EC51EB656A2FD7A6EF852EEECA05FB88FB5D  BookStatCell and BookVerticalDivider copied; BookLineChart adapted for caffeine values, Swedish labels and pre-bucketed periods.

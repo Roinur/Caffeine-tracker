@@ -1,0 +1,4 @@
+ModernMetricTile -> ModernMetricTile: identical function body (whitespace normalized)
+SettingsActionButton -> SettingsActionButton: identical function body (whitespace normalized)
+BookStatCell -> CaffeineStatCell: identical function body (whitespace normalized)
+BookVerticalDivider -> CaffeineVerticalDivider: identical function body (whitespace normalized)

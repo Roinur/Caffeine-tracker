@@ -1,0 +1,16 @@
+{
+  "sourceFile": "app/src/main/java/com/roinur/saucetracker/core/ui/components/DashboardControls.kt",
+  "sourceFileSha256": "cf313918f2ef837061518f41ce3be2c6db80bb5d44ee79b696c6d1cda2239807",
+  "componentSourceSha256": "dd10c901fa1a15d465a790ad2483b87933f6e15da7e9b3d8b4e619ade0129369",
+  "startLine": 360,
+  "endLine": 583,
+  "cycleSourceFile": "app/src/main/java/com/roinur/saucetracker/feature/dashboard/DashboardViewModel.kt",
+  "cycleSourceSha256": "6c1c56a0172ba9d94fa21cdf1476758dc199afa1f22eb9a71a1fa38a0a6f9205",
+  "assetSourceFile": "app/src/main/res/drawable/ic_incognito_24.xml",
+  "assetSha256": "cacfa44f12fb91e3edce4554957ee52f0a70aff1333d698afab4ba090c244217",
+  "integrationOnly": [
+    "package and imports",
+    "Text source-API adapter; private modes fixed false at call site",
+    "Caffeine persistence callbacks outside the upstream component"
+  ]
+}
