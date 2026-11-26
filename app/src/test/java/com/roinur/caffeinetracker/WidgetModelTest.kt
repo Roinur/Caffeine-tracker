@@ -42,4 +42,35 @@ class WidgetModelTest {
         assertEquals(snapshot,BackupCodec.decode(BackupCodec.encode(snapshot)))
         assertNotEquals(intake.id,widgetIntake(drink,now).id)
     }
+    @Test fun widgetIntakeWindowCoversTodayAndMaxModelHorizonWhileExcludingOldHistory() {
+        val settings = TrackerSettings(halfLifeHours = 5.0)
+        val windowStart = widgetIntakeWindowStart(now, settings.halfLifeHours, zone)
+        val ancient = Intake(name = "Last month", caffeineMg = 200.0, timestamp = now - 30L * 24 * 3_600_000L)
+        val slowActiveAtGraphStart = Intake(
+            name = "Slow sip",
+            caffeineMg = 180.0,
+            timestamp = now - WIDGET_GRAPH_LOOKBACK_MS - CaffeineCalculator.maxActiveWindowMs(settings.halfLifeHours) + 60_000L,
+            durationMinutes = CaffeineCalculator.MAX_DURATION_MINUTES,
+            absorptionMinutes90 = CaffeineCalculator.MAX_ABSORPTION_MINUTES_90
+        )
+        val yesterday = Intake(name = "Yesterday", caffeineMg = 95.0, timestamp = now - 8 * 3_600_000L)
+        val today = Intake(name = "Today", caffeineMg = 114.0, timestamp = now - 60_000L)
+        val future = Intake(name = "Future", caffeineMg = 160.0, timestamp = now + 60_000L)
+        val all = listOf(ancient, slowActiveAtGraphStart, yesterday, today, future)
+
+        assertTrue(ancient.timestamp < windowStart)
+        assertTrue(slowActiveAtGraphStart.timestamp >= windowStart)
+        assertTrue(yesterday.timestamp >= windowStart)
+        assertTrue(today.timestamp >= windowStart)
+
+        val bounded = all.filter { it.timestamp in windowStart..now }
+        assertEquals(listOf(slowActiveAtGraphStart, yesterday, today), bounded)
+
+        val fullSummary = widgetSummary(TrackerSnapshot(all, emptyList(), settings), now, zone)
+        val boundedSummary = widgetSummary(TrackerSnapshot(bounded, emptyList(), settings), now, zone)
+        assertEquals(fullSummary.current, boundedSummary.current, 1e-9)
+        assertEquals(fullSummary.evening, boundedSummary.evening, 1e-9)
+        assertEquals(fullSummary.today, boundedSummary.today, 1e-9)
+        assertEquals(fullSummary.bedtime, boundedSummary.bedtime)
+    }
 }

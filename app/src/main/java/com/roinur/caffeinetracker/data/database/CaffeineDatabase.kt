@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.roinur.caffeinetracker.core.model.*
 import com.roinur.caffeinetracker.data.backup.BackupCodec
+import com.roinur.caffeinetracker.feature.widget.widgetIntakeWindowStart
 import org.json.JSONObject
+import java.time.ZoneId
 
 /**
  * Sauce Tracker's SQLiteOpenHelper/DAO transaction structure, reduced to the
@@ -97,6 +99,63 @@ class CaffeineDatabase(context: Context, name: String = "caffeine_tracker.db") :
             .sortedWith(compareByDescending<Drink> { it.favorite }.thenBy { it.favoriteOrder }.thenBy { it.name.lowercase() }.thenBy { it.id })
         val settings = settingsPayload?.let { BackupCodec.settingsFromJson(JSONObject(it)) } ?: TrackerSettings()
         return TrackerSnapshot(intakes, drinks, settings)
+    }
+
+    /**
+     * Bounded read for the home screen widget: uses the intakes_time index to fetch only
+     * today's intakes plus older doses that can still affect the caffeine model, along with
+     * favorite drinks and settings.
+     */
+    fun widgetSnapshot(now: Long, zone: ZoneId = ZoneId.systemDefault()): TrackerSnapshot {
+        val db = readableDatabase
+        val settings: TrackerSettings
+        val intakePayloads: List<String>
+        val drinkPayloads: List<String>
+        db.beginTransactionNonExclusive()
+        try {
+            val settingsPayload = db.rawQuery("SELECT payload FROM preferences WHERE id=1", null).use { c ->
+                if (c.moveToFirst()) c.getString(0) else null
+            }
+            settings = settingsPayload?.let { BackupCodec.settingsFromJson(JSONObject(it)) } ?: TrackerSettings()
+            val since = widgetIntakeWindowStart(now, settings.halfLifeHours, zone)
+            intakePayloads = db.rawQuery(
+                "SELECT payload FROM intakes WHERE timestamp >= ? AND timestamp <= ? ORDER BY timestamp DESC, id",
+                arrayOf(since.toString(), now.toString())
+            ).use { c ->
+                buildList(c.count.coerceAtLeast(0)) { while (c.moveToNext()) add(c.getString(0)) }
+            }
+            drinkPayloads = db.rawQuery("SELECT payload FROM drinks ORDER BY id", null).use { c ->
+                buildList(c.count.coerceAtLeast(0)) { while (c.moveToNext()) add(c.getString(0)) }
+            }
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+        val intakes = intakePayloads.map { BackupCodec.intakeFromJson(JSONObject(it)) }
+        val favorites = drinkPayloads.map { BackupCodec.drinkFromJson(JSONObject(it)) }
+            .filter { it.favorite }
+            .sortedWith(compareBy<Drink> { it.favoriteOrder }.thenBy { it.name.lowercase() }.thenBy { it.id })
+        return TrackerSnapshot(intakes, favorites, settings)
+    }
+
+    /** Lightweight read for legacy widget favorites adapter (reads no intakes). */
+    fun favoriteDrinksWithSettings(): Pair<List<Drink>, TrackerSettings> {
+        val db = readableDatabase
+        val drinkPayloads: List<String>
+        val settingsPayload: String?
+        db.beginTransactionNonExclusive()
+        try {
+            drinkPayloads = db.rawQuery("SELECT payload FROM drinks ORDER BY id", null).use { c ->
+                buildList(c.count.coerceAtLeast(0)) { while (c.moveToNext()) add(c.getString(0)) }
+            }
+            settingsPayload = db.rawQuery("SELECT payload FROM preferences WHERE id=1", null).use { c ->
+                if (c.moveToFirst()) c.getString(0) else null
+            }
+            db.setTransactionSuccessful()
+        } finally { db.endTransaction() }
+        val favorites = drinkPayloads.map { BackupCodec.drinkFromJson(JSONObject(it)) }
+            .filter { it.favorite }
+            .sortedWith(compareBy<Drink> { it.favoriteOrder }.thenBy { it.name.lowercase() }.thenBy { it.id })
+        val settings = settingsPayload?.let { BackupCodec.settingsFromJson(JSONObject(it)) } ?: TrackerSettings()
+        return favorites to settings
     }
 
     fun findIntake(id: String): Intake? = readableDatabase

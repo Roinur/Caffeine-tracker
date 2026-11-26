@@ -11,11 +11,21 @@ import kotlin.math.abs
 
 /** One-compartment estimate with first-order absorption. Dose/time remain original facts. */
 object CaffeineCalculator {
+    const val MAX_ABSORPTION_MINUTES_90 = 1440.0
+    const val MAX_DURATION_MINUTES = 1440
+
     fun activeWindowHours(intake: Intake, halfLifeHours: Double): Double =
         max(halfLifeHours * 20.0, (intake.absorptionMinutes90 / 60.0) * 6.0) + intake.durationMinutes / 60.0
 
     fun activeWindowMs(intake: Intake, halfLifeHours: Double): Long =
         (activeWindowHours(intake, halfLifeHours) * 3_600_000.0).toLong()
+
+    /** Upper bound of activeWindowHours across any intake valid under BackupCodec.validIntake. */
+    fun maxActiveWindowHours(halfLifeHours: Double): Double =
+        max(halfLifeHours * 20.0, (MAX_ABSORPTION_MINUTES_90 / 60.0) * 6.0) + MAX_DURATION_MINUTES / 60.0
+
+    fun maxActiveWindowMs(halfLifeHours: Double): Long =
+        (maxActiveWindowHours(halfLifeHours) * 3_600_000.0).toLong()
 
     fun remaining(intake: Intake, at: Long, halfLifeHours: Double): Double {
         require(halfLifeHours.isFinite() && halfLifeHours in 1.0..24.0)

@@ -21,7 +21,11 @@ internal class FavoritesFactory(private val context: Context,private val widgetI
     private var settings=TrackerSettings()
     override fun onCreate() { onDataSetChanged() }
     override fun onDataSetChanged() {
-        WidgetStorage.database(context,widgetId).use { db -> val snapshot=db.snapshot();drinks=snapshot.drinks.filter { it.favorite };settings=snapshot.settings }
+        WidgetStorage.database(context,widgetId).use { db ->
+            val (favorites, loadedSettings) = db.favoriteDrinksWithSettings()
+            drinks = favorites
+            settings = loadedSettings
+        }
     }
     override fun onDestroy() {}
     override fun getCount()=drinks.size

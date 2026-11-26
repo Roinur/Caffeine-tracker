@@ -76,12 +76,14 @@ class CaffeineWidget : AppWidgetProvider() {
         }
         private fun updateAll(context: Context,sampleOnly: Boolean? = null) {
             val manager=AppWidgetManager.getInstance(context)
-            val snapshots=mutableMapOf<Boolean,com.roinur.caffeinetracker.core.model.TrackerSnapshot>()
+            val snapshots=mutableMapOf<Pair<Boolean,Long>,com.roinur.caffeinetracker.core.model.TrackerSnapshot>()
+            val realNow = System.currentTimeMillis()
             manager.getAppWidgetIds(ComponentName(context,CaffeineWidget::class.java)).forEach { id ->
                 val isSample=WidgetStorage.sample(context,id)
                 if(sampleOnly==null || isSample==sampleOnly) {
-                    val snapshot=snapshots.getOrPut(isSample) { WidgetStorage.database(context,id).use { it.snapshot() } }
-                    manager.updateAppWidget(id,WidgetRenderer.build(context,id,snapshot,WidgetStorage.now(context,id),manager.getAppWidgetOptions(id)))
+                    val now = if (isSample) WidgetStorage.now(context, id) else realNow
+                    val snapshot=snapshots.getOrPut(isSample to now) { WidgetStorage.database(context,id).use { it.widgetSnapshot(now) } }
+                    manager.updateAppWidget(id,WidgetRenderer.build(context,id,snapshot,now,manager.getAppWidgetOptions(id)))
                     if(android.os.Build.VERSION.SDK_INT < 31) manager.notifyAppWidgetViewDataChanged(id,R.id.widget_favorites)
                 }
             }
