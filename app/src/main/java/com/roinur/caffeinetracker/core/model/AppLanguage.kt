@@ -159,6 +159,7 @@ fun displayCategory(category: String, language: AppLanguage): String {
             "kaffe", "coffee" -> "Coffee"
             "te", "tea" -> "Tea"
             "energidryck", "energy drink" -> "Energy drink"
+            "lask", "soda" -> "Soda"
             "egen", "custom" -> "Custom"
             "ovrigt", "other" -> "Other"
             "importerad", "imported" -> "Imported"
@@ -168,6 +169,7 @@ fun displayCategory(category: String, language: AppLanguage): String {
             "kaffe", "coffee" -> "Kaffe"
             "te", "tea" -> "Te"
             "energidryck", "energy drink" -> "Energidryck"
+            "lask", "soda" -> "Läsk"
             "egen", "custom" -> "Egen"
             "ovrigt", "other" -> "Övrigt"
             "importerad", "imported" -> "Importerad"
@@ -179,6 +181,6 @@ fun displayCategory(category: String, language: AppLanguage): String {
 fun isCustomCategory(category: String): Boolean = searchKey(category) in setOf("egen", "custom")
 
 fun defaultCategories(language: AppLanguage): List<String> = when (language) {
-    AppLanguage.SV -> listOf("Kaffe", "Te", "Energidryck", "Egen", "Övrigt")
-    AppLanguage.EN -> listOf("Coffee", "Tea", "Energy drink", "Custom", "Other")
+    AppLanguage.SV -> listOf("Kaffe", "Te", "Energidryck", "Läsk", "Egen", "Övrigt")
+    AppLanguage.EN -> listOf("Coffee", "Tea", "Energy drink", "Soda", "Custom", "Other")
 }

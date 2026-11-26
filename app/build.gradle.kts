@@ -1,27 +1,14 @@
 // Forked from Sauce Tracker Rewrite; media/network/source dependencies removed.
 import java.util.Properties
-import org.gradle.api.tasks.Sync
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
-val localBrandArtworkDir = rootProject.file("artwork/source/pre-release-private")
-val generatedBrandResDir = layout.buildDirectory.dir("generated/res/localBrandArtwork")
-val syncLocalBrandArtwork by tasks.registering(Sync::class) {
-    from(localBrandArtworkDir) {
-        include("*.png")
-    }
-    into(generatedBrandResDir.map { it.dir("drawable-nodpi") })
-}
-
 android {
     namespace = "com.roinur.caffeinetracker"
     compileSdk = 34
-    if (localBrandArtworkDir.isDirectory) {
-        sourceSets.getByName("main").res.srcDir(generatedBrandResDir)
-    }
 
     val buildNumberProperties = Properties().apply {
         rootProject.file("build-number.properties").inputStream().use { load(it) }
@@ -77,11 +64,6 @@ android {
     buildFeatures { compose = true; buildConfig = true }
     composeOptions { kotlinCompilerExtensionVersion = "1.5.14" }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
-}
-if (localBrandArtworkDir.isDirectory) {
-    tasks.named("preBuild") {
-        dependsOn(syncLocalBrandArtwork)
-    }
 }
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")

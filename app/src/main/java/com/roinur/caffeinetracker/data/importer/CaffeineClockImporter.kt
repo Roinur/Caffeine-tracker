@@ -3,6 +3,7 @@ package com.roinur.caffeinetracker.data.importer
 import com.roinur.caffeinetracker.core.model.Intake
 import com.roinur.caffeinetracker.core.model.Drink
 import com.roinur.caffeinetracker.core.model.TrackerSnapshot
+import com.roinur.caffeinetracker.core.model.inferDrinkCategory
 import com.roinur.caffeinetracker.data.backup.BackupCodec
 import com.roinur.caffeinetracker.data.backup.drive.CaffeineCloudBackup
 import org.json.JSONArray
@@ -117,7 +118,7 @@ object CaffeineClockImporter {
                 Intake(
                     id = UUID.nameUUIDFromBytes(sourceKey.toByteArray(Charsets.UTF_8)).toString(),
                     name = name, caffeineMg = mg, timestamp = timestamp, durationMinutes = duration,
-                    category = value("category")?.toString() ?: if (isCustom) "Egen" else "Importerad",
+                    category = value("category")?.toString() ?: if (isCustom) "Egen" else inferDrinkCategory(name),
                     note = value("note","notes")?.toString() ?: "", sourceKey = sourceKey,
                     servings = servings,
                     servingUnit = value("unit","servingunit")?.toString() ?: "",

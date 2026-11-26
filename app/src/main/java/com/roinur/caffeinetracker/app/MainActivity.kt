@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         if(intent.component?.className != media.LAUNCHER_COMPONENT_CLASS) media.deactivate()
         else if(savedInstanceState == null || !media.active) media.activateIfRequested(applicationContext, intent)
         configureWindow()
-        lifecycleScope.launch(Dispatchers.Default) { warmDrinkThumbnails(applicationContext.resources) }
+        lifecycleScope.launch(Dispatchers.Default) { warmDrinkThumbnails(applicationContext) }
         setContent { CaffeineTrackerApp(vm) }
         if (savedInstanceState == null) receive(intent)
     }

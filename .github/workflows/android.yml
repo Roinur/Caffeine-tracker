@@ -16,5 +16,10 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
-      - run: sdkmanager 'platforms;android-34' 'build-tools;34.0.0'
-      - run: bash ./gradlew assembleDebug testReleaseUnitTest lintRelease
+      - name: Install Android SDK 34
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" 'platforms;android-34' 'build-tools;34.0.0'
+      - name: Build, test and lint
+        run: bash ./gradlew assembleDebug testReleaseUnitTest lintRelease --no-daemon --console=plain

@@ -32,7 +32,16 @@ enum class DrinkImage(val label: String, val enLabel: String = label) {
     fun localizedLabel(language: AppLanguage): String = if (language == AppLanguage.EN) enLabel else label
 }
 
-fun validDrinkImageKey(key: String?): Boolean = key == null || DrinkImage.entries.any { it.name == key }
+const val CUSTOM_IMAGE_PREFIX = "custom:"
+private val customImageKeyPattern = Regex("^custom:[a-zA-Z0-9_-]{8,64}\\.png$")
+
+fun isCustomDrinkImageKey(key: String?): Boolean = key != null && customImageKeyPattern.matches(key)
+
+fun customDrinkImageFileName(key: String?): String? =
+    key?.takeIf(::isCustomDrinkImageKey)?.removePrefix(CUSTOM_IMAGE_PREFIX)
+
+fun validDrinkImageKey(key: String?): Boolean =
+    key == null || DrinkImage.entries.any { it.name == key } || isCustomDrinkImageKey(key)
 
 private val combiningMarks = Regex("\\p{M}+")
 private val whitespace = Regex("\\s+")
@@ -78,6 +87,26 @@ fun drinkImage(name: String, category: String, imageKey: String? = null): DrinkI
     drinkImageCache[cacheKey] = resolved
     return resolved
 }
+
+fun inferDrinkCategory(name: String, fallback: String = "Övrigt"): String =
+    when (drinkImage(name, "")) {
+        DrinkImage.DRIP, DrinkImage.INSTANT, DrinkImage.LATTE, DrinkImage.ICED_LATTE, DrinkImage.ESPRESSO -> "Kaffe"
+        DrinkImage.BLACK_TEA, DrinkImage.GREEN_TEA -> "Te"
+        DrinkImage.NOCCO, DrinkImage.CELSIUS, DrinkImage.RED_BULL, DrinkImage.LATITUDE,
+        DrinkImage.MONSTER, DrinkImage.MONSTER_ULTRA, DrinkImage.POWERKING,
+        DrinkImage.ROCKSTAR, DrinkImage.REIGN, DrinkImage.PRIME, DrinkImage.ENERGY -> "Energidryck"
+        DrinkImage.COCA_COLA, DrinkImage.PEPSI -> "Läsk"
+        DrinkImage.NONE -> {
+            val key = searchKey(name)
+            when {
+                listOf("kaffe", "coffee", "cappuccino", "mocha", "cortado", "americano", "espresso", "nescafe").any(key::contains) -> "Kaffe"
+                listOf("te ", " tea", "chai", "matcha", "oolong", "yerba", "mate").any(key::contains) || key == "te" || key == "tea" -> "Te"
+                listOf("energi", "energy", "pwo", "pre-workout", "preworkout", "guarana", "burn", "bang", "ghost", "alani").any(key::contains) -> "Energidryck"
+                listOf("cola", "pepsi", "soda", "dr pepper", "mountain dew", "mtn dew", "fanta", "sprite", "lask").any(key::contains) -> "Läsk"
+                else -> fallback
+            }
+        }
+    }
 
 @Immutable
 data class DrinkChoice(val key: String, val name: String, val variants: List<Drink>) {

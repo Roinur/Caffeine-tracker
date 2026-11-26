@@ -34,6 +34,46 @@ class CaffeineDatabase(context: Context, name: String = "caffeine_tracker.db") :
         error("Ingen migration definierad från version " + oldVersion + " till " + newVersion)
     }
 
+    override fun onOpen(db: SQLiteDatabase) {
+        super.onOpen(db)
+        if (!db.isReadOnly) {
+            recategorizeImportedRows(db)
+        }
+    }
+
+    private fun recategorizeImportedRows(db: SQLiteDatabase) {
+        val where = "payload LIKE '%\"Importerad\"%' OR payload LIKE '%\"Imported\"%'"
+        val hasImported = db.rawQuery(
+            "SELECT 1 FROM drinks WHERE $where UNION ALL SELECT 1 FROM intakes WHERE $where LIMIT 1",
+            null
+        ).use { it.moveToFirst() }
+        if (!hasImported) return
+
+        db.beginTransaction()
+        try {
+            db.rawQuery("SELECT id, payload FROM drinks WHERE $where", null).use { c ->
+                while (c.moveToNext()) {
+                    val drink = BackupCodec.drinkFromJson(JSONObject(c.getString(1)))
+                    if (searchKey(drink.category) in setOf("importerad", "imported")) {
+                        putDrink(db, drink.copy(category = inferDrinkCategory(drink.name)))
+                    }
+                }
+            }
+            db.rawQuery("SELECT id, payload FROM intakes WHERE $where", null).use { c ->
+                while (c.moveToNext()) {
+                    val intake = BackupCodec.intakeFromJson(JSONObject(c.getString(1)))
+                    if (searchKey(intake.category) in setOf("importerad", "imported")) {
+                        val updated = intake.copy(category = inferDrinkCategory(intake.name))
+                        db.update("intakes", intakeValues(updated), "id=?", arrayOf(updated.id))
+                    }
+                }
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
     fun snapshot(): TrackerSnapshot {
         val db = readableDatabase
         val intakePayloads: List<String>

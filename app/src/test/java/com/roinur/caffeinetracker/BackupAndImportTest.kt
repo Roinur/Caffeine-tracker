@@ -102,7 +102,11 @@ class BackupAndImportTest {
         val customEntry = preview.entries.single { it.name == "Latitude älven" }
         assertEquals("Egen", customEntry.category)
         val catalogEntry = preview.entries.single { it.name == "Monster Energy Ultra" }
-        assertEquals("Importerad", catalogEntry.category)
+        assertEquals("Energidryck", catalogEntry.category)
+        assertEquals("Kaffe", inferDrinkCategory("Instant Coffee"))
+        assertEquals("Te", inferDrinkCategory("Green tea"))
+        assertEquals("Läsk", inferDrinkCategory("Coca-Cola Zero"))
+        assertEquals("Övrigt", inferDrinkCategory("Mystery Pill"))
         assertEquals(3, preview.drinks.size)
         assertEquals("Egen", preview.drinks.single { it.name == "Latitude älven" }.category)
         assertEquals("Egen", preview.drinks.single { it.name == "My Pre-Workout" }.category)

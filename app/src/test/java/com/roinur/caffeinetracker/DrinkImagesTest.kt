@@ -58,4 +58,13 @@ class DrinkImagesTest {
         old.getJSONArray("drinks").getJSONObject(0).put("imageKey", "../unknown.png")
         assertThrows(IllegalArgumentException::class.java) { BackupCodec.decode(old.toString()) }
     }
+    @Test fun customImageKeysAreValidatedAndPreservedInBackups() {
+        assertTrue(validDrinkImageKey("custom:0123456789abcdef.png"))
+        assertFalse(validDrinkImageKey("custom:../evil.png"))
+        assertFalse(validDrinkImageKey("custom:sub/dir.png"))
+        assertFalse(validDrinkImageKey("custom:short.png"))
+        val drink = Drink("c1", "Special Brew", 120.0, "330 ml", imageKey = "custom:0123456789abcdef.png")
+        val snapshot = TrackerSnapshot(emptyList(), listOf(drink), TrackerSettings())
+        assertEquals(snapshot, BackupCodec.decode(BackupCodec.encode(snapshot)))
+    }
 }

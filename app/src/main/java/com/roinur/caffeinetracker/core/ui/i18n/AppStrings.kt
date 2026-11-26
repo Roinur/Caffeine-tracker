@@ -131,6 +131,9 @@ interface AppStrings {
     val chooseImage: String
     val imageReuseHint: String
     val autoFromName: String
+    val chooseCustomImage: String
+    val customImageLabel: String
+    val customImageLoadError: String
     val imageDescPrefix: String
     // Drinks screen
     val favoritesOnly: String
@@ -482,6 +485,9 @@ private object SvStrings : AppStrings {
     override val chooseImage = "Välj bild"
     override val imageReuseHint = "Samma bild kan användas för flera egna drycker och portionsstorlekar."
     override val autoFromName = "Automatiskt från namnet"
+    override val chooseCustomImage = "Egen bild"
+    override val customImageLabel = "Egen bild"
+    override val customImageLoadError = "Kunde inte läsa bilden."
     override val imageDescPrefix = "Bild: "
     override val favoritesOnly = "Bara favoriter"
     override val customOnly = "Egna"
@@ -814,6 +820,9 @@ private object EnStrings : AppStrings {
     override val chooseImage = "Choose image"
     override val imageReuseHint = "The same image can be reused across custom drinks and serving sizes."
     override val autoFromName = "Automatic from name"
+    override val chooseCustomImage = "Custom image"
+    override val customImageLabel = "Custom image"
+    override val customImageLoadError = "Could not read the image."
     override val imageDescPrefix = "Image: "
     override val favoritesOnly = "Favorites only"
     override val customOnly = "Custom"
