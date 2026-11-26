@@ -1,12 +1,46 @@
-# Caffeine Tracker
+<p align="center">
+  <img src="docs/assets/app-icon.png" width="96" alt="Caffeine Tracker icon">
+</p>
 
-Caffeine Tracker is an Android app for logging caffeine, seeing estimated levels across the day and adding favourite drinks directly from a home screen widget. It supports Swedish and English, imports Caffeine Clock history, and offers JSON backups and optional Google Drive backup.
+<h1 align="center">Caffeine Tracker</h1>
+
+<p align="center">
+  A local-first Android app for logging caffeine, tracking estimated active levels across the day, and adding favourite drinks straight from a home screen widget.
+</p>
+
+<p align="center">
+  Live Curve&nbsp;&nbsp;•&nbsp;&nbsp;Quick-Add Favourites&nbsp;&nbsp;•&nbsp;&nbsp;Statistics &amp; Heatmap&nbsp;&nbsp;•&nbsp;&nbsp;Home Widget&nbsp;&nbsp;•&nbsp;&nbsp;Local &amp; Drive Backups
+</p>
+
+<p align="center">
+  <img alt="Release 1.0" src="https://img.shields.io/badge/release-1.0-f2b8a0">
+  <img alt="Android 8.0+" src="https://img.shields.io/badge/Android-8.0%2B-3ddc84">
+  <img alt="Kotlin and Compose" src="https://img.shields.io/badge/Kotlin-Compose-7f52ff">
+  <img alt="Local first" src="https://img.shields.io/badge/data-local--first-4c9aff">
+</p>
+
+Caffeine Tracker models caffeine absorption and elimination from your logged drinks, shows estimated active caffeine right now and at bedtime, and keeps your entire history on your device with no account required.
+
+## Features
+
+- **Live caffeine dashboard:** Estimated active caffeine now, projected level at your configured bedtime, and today's total intake at a glance.
+- **Interactive 30-hour caffeine curve:** Smooth monotone curve showing absorption, peak, and elimination across the day and night, with a bedtime threshold guide, bedtime marker, and touch/drag scrubbing.
+- **One-tap favourites & custom drinks:** Paged favourites grid on the home screen, searchable drink catalog with built-in drinks and custom recipes, custom portion sizes, sipping duration, absorption time, and drink icons.
+- **History & fast editing:** Chronological intake history with search, date-range filtering, notes, and quick editing or deletion without losing original timestamps.
+- **Statistics & intake heatmap:** Weekly, monthly, yearly, and all-time charts for caffeine (mg) and intake counts, a 13-week intake calendar heatmap, and top drinks breakdown.
+- **Home screen widget:** Compact and expanded home screen widget showing active caffeine, bedtime estimate, daily total, quick-add favourite buttons, and one-tap Undo.
+- **Languages & theming:** Full Swedish and English UI with canonical drink matching (switching languages never splits statistics), System/Light/Dark themes, selectable accent colours, and an Extra dark mode.
+- **Import & backups:** Import history from JSON or CSV, export/restore full JSON backups with preview and pre-restore safety copies, automatic rolling local backups (with optional external folder via SAF), and optional Google Drive cloud backup with read-back verification.
 
 ## Install
 
-Download the signed APK and matching SHA-256 file from this repository's Releases page when a release is available. Open the APK on Android 8.0 or later and allow installation from the app you opened it with if Android asks. ADB installation of a compatible update uses `adb install -r Caffeine-Tracker-1.0-release.apk`.
+Download the signed APK and matching `.sha256` file from this repository's **Releases** page. Open the APK on Android 8.0 or later and allow installation from the app you opened it with if Android asks. For ADB updates using the same signing certificate:
 
-If you previously installed a private build with a different signing certificate, export a full JSON backup in **Settings → Backup and import**, copy it somewhere accessible outside the app and verify that the file can be opened. Pause automatic Drive backup on any device still running the earlier private build before switching devices. Only then remove the private build, install the signed release and restore the JSON. Uninstalling deletes on-device app data. Keep the exported JSON until you have checked your history, favourites and settings in the release.
+```sh
+adb install -r Caffeine-Tracker-1.0-release.apk
+```
+
+If you previously installed a private build signed with a different certificate, export a full JSON backup in **Settings → Backup and import**, copy it somewhere outside the app, and verify that it opens. Pause automatic Drive backup on any device still running the earlier build before switching. Then uninstall the old build, install the signed release, and restore your JSON backup.
 
 ## Build from source
 
@@ -16,20 +50,26 @@ Install JDK 17 or 21 and Android SDK Platform 34 with Build Tools 34.0.0. Set `J
 ./gradlew assembleDebug testReleaseUnitTest lintRelease
 ```
 
-On Windows use `.gradlew.bat`. Gradle downloads dependencies from Google's Maven repository, Maven Central and the Gradle Plugin Portal. The debug APK is at `app/build/outputs/apk/debug/app-debug.apk`.
+On Windows use `.\gradlew.bat`. Gradle downloads dependencies from Google's Maven repository, Maven Central, and the Gradle Plugin Portal. The debug APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
 
-For a signed public build, the maintainer supplies `CAFFEINE_KEYSTORE`, `CAFFEINE_STORE_PASSWORD`, `CAFFEINE_KEY_ALIAS` and `CAFFEINE_KEY_PASSWORD` in their build environment. Run `.uild.ps1 -Release -Checks` on Windows to produce the APK and checksum file under `outputs/`. On other systems, use `./gradlew assembleRelease` with those variables set. Maintain one signing key across releases. Keep the store and password outside the repository and back them up separately. The PowerShell script can also load the maintainer's local Windows-protected credentials from the Android configuration directory. Those credentials are tied to that Windows login, so keep a separate recovery copy of the signing password in a password manager.
+For a signed release build, supply `CAFFEINE_KEYSTORE`, `CAFFEINE_STORE_PASSWORD`, `CAFFEINE_KEY_ALIAS`, and `CAFFEINE_KEY_PASSWORD` in your environment and run:
 
-The visible version is maintained in `app/build.gradle.kts` and the PowerShell build script advances `build-number.properties` for packaged builds. Use `-NoBump` for local verification with the current number.
+```powershell
+.\build.ps1 -Release -Checks
+```
+
+This writes the signed APK and SHA-256 checksum under `outputs/`. On other systems, run `./gradlew assembleRelease` with those environment variables set. Maintain one signing key across releases and keep the keystore and credentials outside the repository.
+
+The visible version (`versionName`) is maintained in `app/build.gradle.kts`, while `build.ps1` automatically increments `versionCode` in `build-number.properties` on each successful packaged build (use `-NoBump` for local verification without advancing the build number).
 
 ## Backups and privacy
 
-Intake history, favourites and preferences live in a local SQLite database. Logging and the widget work offline without an account. A full backup includes drinking times, quantities, notes, recipes and app preferences. JSON backups are readable files, so store them somewhere you trust. Full restores show a preview and save a local recovery copy before replacing app data.
+Intake history, favourites, custom drinks, and preferences are stored locally in SQLite. Logging, charts, statistics, and the home screen widget work completely offline without an account. JSON backups are human-readable files, so store them somewhere you trust. Restores show a preview and automatically save a local recovery copy before replacing data.
 
-Android system cloud backup is disabled for app data. On Android 12 and newer the production database can be transferred directly to another phone through Android's device-transfer feature. For other transfers, use a JSON export or opt in to Drive backup.
+Android cloud backup is disabled for app data (`allowBackup` rules exclude cloud backup while allowing Android 12+ device-to-device transfer). For cross-device transfers, use JSON export/import or opt in to Google Drive backup.
 
-The Drive option requests access to Drive files associated with Caffeine Tracker. It uploads a full backup to the chosen Google account only when automatic backup is enabled or you start a backup. The backup is protected in transit and is readable by the account holder. Disconnecting stops future uploads and leaves existing files in Drive. You can also download a Caffeine Tracker backup from Drive and restore the file from Settings, which works independently of Google sign-in. You can remove those files from Drive yourself. If a new phone finds an existing backup, review and restore it before making that phone the backup source. When uploads conflict, the app pauses and keeps the competing copies. A successful upload keeps the previous verified copy. Older versions pruned from the normal backup list are moved to Drive Trash. See [release verification](docs/RELEASE_VERIFICATION.md) for checking authorization with the distribution certificate.
+Google Drive backup is optional and only uploads when automatic backup is enabled or when you trigger a backup manually. It verifies uploads by reading them back before pruning older copies to Drive Trash, pauses if competing uploads conflict, and leaves existing Drive files untouched if you disconnect. Uploads are protected in transit but are not end-to-end encrypted. See [docs/RELEASE_VERIFICATION.md](docs/RELEASE_VERIFICATION.md) for OAuth and release verification steps.
 
 ## Credits and source terms
 
-Caffeine Tracker reuses components from Roinur's Sauce Tracker Rewrite and Book Tracker. Caffeine estimates are a model of absorption and elimination and depend on the recorded quantities and timings. See [source provenance](BASE_PROVENANCE.txt), [source terms](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md).
+Caffeine Tracker reuses UI and architecture components from Roinur's Sauce Tracker Rewrite and Book Tracker. Caffeine levels are pharmacological estimates of absorption and elimination based on your recorded doses, timings, and half-life setting. See [BASE_PROVENANCE.txt](BASE_PROVENANCE.txt), [LICENSE](LICENSE), and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

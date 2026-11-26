@@ -178,8 +178,22 @@ fun CaffeineChart(
         val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = muted.copy(alpha = 0.78f).toArgb(); textSize = 11.sp.toPx() }
         val thresholdPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = muted.copy(alpha = 0.85f).toArgb(); textSize = 11.sp.toPx() }
         val line = Path()
-        values.forEachIndexed { i, point -> if (i == 0) line.moveTo(x(point.first), y(point.second)) else line.lineTo(x(point.first), y(point.second)) }
-        val fill = Path().apply { addPath(line); lineTo(right, bottom); lineTo(left, bottom); close() }
+        if (values.isNotEmpty()) {
+            val xs = FloatArray(values.size) { i -> x(values[i].first) }
+            val ys = FloatArray(values.size) { i -> y(values[i].second) }
+            line.moveTo(xs[0], ys[0])
+            for (seg in com.roinur.caffeinetracker.core.caffeine.monotoneCubicSegments(xs, ys)) {
+                line.cubicTo(seg.x1, seg.y1, seg.x2, seg.y2, seg.x3, seg.y3)
+            }
+        }
+        val fill = Path().apply {
+            if (values.isNotEmpty()) {
+                addPath(line)
+                lineTo(right, bottom)
+                lineTo(left, bottom)
+                close()
+            }
+        }
         val areaBrush = Brush.verticalGradient(
             colors = listOf(primary.copy(alpha = .34f), primary.copy(alpha = .02f)),
             startY = top,
