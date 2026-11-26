@@ -30,8 +30,8 @@ Caffeine Tracker 1.0 on a real device.
 <tr><td><img src="docs/screenshots/home.png" width="320" alt="Home dashboard with active caffeine, bedtime estimate, favourites grid and smooth 30-hour caffeine curve"></td><td><img src="docs/screenshots/history.png" width="320" alt="Chronological intake history with daily totals, search and date filters"></td></tr>
 <tr><th>Drinks &amp; favourites</th><th>Statistics</th></tr>
 <tr><td><img src="docs/screenshots/drinks.png" width="320" alt="Drinks catalog with favourites, drag-to-reorder and custom drinks"></td><td><img src="docs/screenshots/statistics.png" width="320" alt="Monthly caffeine statistics chart, totals, daily average and intake calendar"></td></tr>
-<tr><th>Settings</th><th>About</th></tr>
-<tr><td><img src="docs/screenshots/settings.png" width="320" alt="Categorized Settings with search bar"></td><td><img src="docs/screenshots/about.png" width="320" alt="About screen showing Caffeine Tracker Version 1.0, Build 45 and home widget action"></td></tr>
+<tr><th>Settings</th><th>Home screen widget</th></tr>
+<tr><td><img src="docs/screenshots/settings.png" width="320" alt="Categorized Settings with search bar"></td><td><img src="docs/screenshots/widget.png" width="320" alt="Home screen widget with active caffeine, bedtime estimate, ambient curve and one-tap favourites"></td></tr>
 </table>
 
 ## Features
